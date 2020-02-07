@@ -6,66 +6,67 @@
 <script src="https://cdn.jsdelivr.net/gh/tmijs/cdn/latest/tmi.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <style>
-#home {
-  position: fixed;
-  display: none;
-  border: 1px solid black;
-  background-color: #c0c0c0;
-  border-radius: 10px;
-  text-align: center;
-  width: 600px;
-  height: 300px;
-  top: 20px;
-  left: 20px;
-}
-#voteContain {
-  position: fixed;
-  display: none;
-  /* border: 1px solid black; */
-  border-radius: 10px;
-  width: 800px;
-  height: 600px;
-  top: 20px;
-  left: 20px;
-}
-#now {
-  position: absolute;
-  display: inline;
-  text-shadow: 0px 0px 1px #000, 1px 1px 1px #000, 1px 0px 1px #000, 0px 1px 1px #000, -1px -1px 1px #000, -1px 0px 1px #000, 0px -1px 1px #000;
-  color: #ff0000;
-  font-size: 10vw;
-  text-align: center;
-  width: 800px;
-}
-.vote {
-  position: absolute;
-  text-shadow: 0px 0px 1px #000, 1px 1px 1px #000, 1px 0px 1px #000, 0px 1px 1px #000, -1px -1px 1px #000, -1px 0px 1px #000, 0px -1px 1px #000;
-  color: #ffffff;
-  font-family: "Arial Black", "Times New Roman";
-  font-size: 60vw;
-  text-align: center;
-  line-height: 530px;
-  width: 800px;
-  height: 600px;
-}
-@keyframes spinleft {
-  from { transform: rotate(360deg) scale(.7); }
-  to { transform: rotate(0deg) scale(0) ; }
-}
-@keyframes spinright {
-  from { transform: rotate(0deg) scale(.7); }
-  to { transform: rotate(360deg) scale(0) ; }
-}
-.spinleft {
-  animation: spinleft 5s;
-}
-.spinright {
-  animation: spinright 5s;
-}
+  @import url('https://fonts.googleapis.com/css?family=Indie+Flower&display=swap');
+  h1 {font-family: 'Indie Flower', cursive;}
+  #home {
+    position: fixed;
+    display: none;
+    border: 1px solid black;
+    background-color: #c0c0c0;
+    border-radius: 10px;
+    text-align: center;
+    width: 600px;
+    height: 300px;
+    top: 20px;
+    left: 20px;
+  }
+  #voteContain {
+    position: fixed;
+    display: none;
+    /* border: 1px solid black; */
+    border-radius: 10px;
+    width: 800px;
+    height: 600px;
+    top: 20px;
+    left: 20px;
+  }
+  #now {
+    position: absolute;
+    display: inline;
+    text-shadow: 0px 0px 1px #000, 1px 1px 1px #000, 1px 0px 1px #000, 0px 1px 1px #000, -1px -1px 1px #000, -1px 0px 1px #000, 0px -1px 1px #000;
+    color: #ff0000;
+    font-size: 10vw;
+    text-align: center;
+    width: 800px;
+  }
+  .vote {
+    position: absolute;
+    text-shadow: 0px 0px 1px #000, 1px 1px 1px #000, 1px 0px 1px #000, 0px 1px 1px #000, -1px -1px 1px #000, -1px 0px 1px #000, 0px -1px 1px #000;
+    color: #ffffff;
+    font-family: "Arial Black", "Times New Roman";
+    font-size: 60vw;
+    text-align: center;
+    line-height: 530px;
+    width: 800px;
+    height: 600px;
+  }
+  @keyframes spinleft {
+    from { transform: rotate(360deg) scale(.7); }
+    to { transform: rotate(0deg) scale(0) ; }
+  }
+  @keyframes spinright {
+    from { transform: rotate(0deg) scale(.7); }
+    to { transform: rotate(360deg) scale(0) ; }
+  }
+  .spinleft {
+    animation: spinleft 5s;
+  }
+  .spinright {
+    animation: spinright 5s;
+  }
 </style>
 </head>
 <body>
-
 <div id="voteContain">
   <div id="now">VOTE NOW!</div>
   <div id="vote" class="vote"></div>
@@ -78,88 +79,88 @@
 </div>
 <script>
 
-const vote = {
-  init: ()=>{
-    vote.client = new tmi.client({
-    	options: { debug: false },
-    	connection: { cluster: "aws", reconnect: true },
-      channels: [vote.channel]
-    })
-    vote.client.connect();
-    vote.client.on('chat', function(channel, user, message, self) {
-      if ((user['username'] === vote.channel || user.mod) && message === "!vote") {
-        if (vote.voteOn === true) {return}
-        else {vote.voteOn = true}
-        vote.voteBuffer = {};
-        vote.topVote = "?".repeat(5).split("").map(() => [0,0,""]);
-        $("#voteContain").show();
-        $("#vote").text('');
-      }
-      if ((user['username'] === vote.channel || user.mod) && message === "!vote off") {
-        vote.voteOn = false;
-        vote.voteBuffer = {};
-        vote.topVote = "?".repeat(5).split("").map(() => [0,0,""]);
-        $("#voteContain").hide();
-        $("#vote").text('');
-      }
-      if (vote.voteOn) {
-        if (/^[1-5]{1}$/.test(message)) vote.add((user['display-name'] || user['username']), message);
-      }
-    })
-  },
-  channel: window.location.hash.slice(1).toLowerCase(),
-  indexOfMax: (arr)=>{
-     let max = arr[0][0],
-         maxIndex = 0;
-     for (var i = 1; i < arr.length; i++) {
-        if (arr[i][0] > max) {
-            maxIndex = i;
-            max = arr[i][0];
+  const vote = {
+    init: ()=>{
+      vote.client = new tmi.client({
+      	options: { debug: false },
+      	connection: { cluster: "aws", reconnect: true },
+        channels: [vote.channel]
+      })
+      vote.client.connect();
+      vote.client.on('chat', function(channel, user, message, self) {
+        if ((user['username'] === vote.channel || user.mod) && message === "!vote") {
+          if (vote.voteOn === true) {return}
+          else {vote.voteOn = true}
+          vote.voteBuffer = {};
+          vote.topVote = "?".repeat(5).split("").map(() => [0,0,""]);
+          $("#voteContain").show();
+          $("#vote").text('');
         }
-        else {
-          if (arr[i][0] == max) {
-            if ( arr[maxIndex][1] > arr[i][1] ) {
+        if ((user['username'] === vote.channel || user.mod) && message === "!vote off") {
+          vote.voteOn = false;
+          vote.voteBuffer = {};
+          vote.topVote = "?".repeat(5).split("").map(() => [0,0,""]);
+          $("#voteContain").hide();
+          $("#vote").text('');
+        }
+        if (vote.voteOn) {
+          if (/^[1-5]{1}$/.test(message)) vote.add((user['display-name'] || user['username']), message);
+        }
+      })
+    },
+    channel: window.location.hash.slice(1).toLowerCase(),
+    indexOfMax: (arr)=>{
+       let max = arr[0][0],
+           maxIndex = 0;
+       for (var i = 1; i < arr.length; i++) {
+          if (arr[i][0] > max) {
               maxIndex = i;
               max = arr[i][0];
+          }
+          else {
+            if (arr[i][0] == max) {
+              if ( arr[maxIndex][1] > arr[i][1] ) {
+                maxIndex = i;
+                max = arr[i][0];
+              }
             }
           }
-        }
-    }
-    return maxIndex;
-  },
-  add: (name, num)=>{
-   if (!vote.voteBuffer[name]) {
-      vote.spin(name, num);
-      vote.topVote[num - 1][0]++
-      vote.topVote[num - 1][1] = Date.now();
-      vote.topVote[num - 1][2] = name;
-      vote.voteBuffer[name] = num;
-      $("#vote").text(vote.indexOfMax(vote.topVote)+1);
-    }
-  },
-  spin: (name, num)=>{
-    let colour = '#'+Math.random().toString(16).substr(2,6);
-    $('#voteContain').append('<div id="' + name + '" class="vote"></div>')
-    $("#"+name).text(num);
-    $("#"+name).css('color' , colour);
-    $("#"+name).addClass((Math.random() > .5) ? 'spinleft' : 'spinright');
-    setTimeout(function(){
-        $("#"+name).remove();
-    },5000);
-  },
-  voteBuffer: {},
-  topVote: "?".repeat(5).split("").map(() => [0,0,""]),
-  voteOn: false,
-  client: {}
-}
+      }
+      return maxIndex;
+    },
+    add: (name, num)=>{
+     if (!vote.voteBuffer[name]) {
+        vote.spin(name, num);
+        vote.topVote[num - 1][0]++
+        vote.topVote[num - 1][1] = Date.now();
+        vote.topVote[num - 1][2] = name;
+        vote.voteBuffer[name] = num;
+        $("#vote").text(vote.indexOfMax(vote.topVote)+1);
+      }
+    },
+    spin: (name, num)=>{
+      let colour = '#'+Math.random().toString(16).substr(2,6);
+      $('#voteContain').append('<div id="' + name + '" class="vote"></div>')
+      $("#"+name).text(num);
+      $("#"+name).css('color' , colour);
+      $("#"+name).addClass((Math.random() > .5) ? 'spinleft' : 'spinright');
+      setTimeout(function(){
+          $("#"+name).remove();
+      },5000);
+    },
+    voteBuffer: {},
+    topVote: "?".repeat(5).split("").map(() => [0,0,""]),
+    voteOn: false,
+    client: {}
+  }
 
-if (/^[A-Za-z0-9_]+$/.test(vote.channel)) {
-  vote.init();
-}
-else {
-  $("#home").show();
-  $("body").css("background-color","black");
-}
+  if (/^[A-Za-z0-9_]+$/.test(vote.channel)) {
+    vote.init();
+  }
+  else {
+    $("#home").show();
+    $("body").css("background-color","black");
+  }
 
 </script>
 </body>
